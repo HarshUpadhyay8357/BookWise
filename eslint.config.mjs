@@ -13,6 +13,9 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  'standard',
+  'plugin:tailwindcss/recommended',
+  'prettier'
 ]);
 
 export default eslintConfig;
