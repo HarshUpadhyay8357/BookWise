@@ -7,16 +7,18 @@ import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import ratelimit from "../ratelimit";
 import { redirect } from "next/navigation";
+import { qstash } from "../workflow";
+import { sendWelcomeEmail } from "../email";
 
 export const signInWithCredentials = async (
   params: Pick<AuthCredentials, "email" | "password">,
 ) => {
   const { email, password } = params;
 
-  const ip=(await headers()).get('x-forwarded-for')||'127.0.0.1';
-  const {success}=await ratelimit.limit(ip);
+  const ip = (await headers()).get("x-forwarded-for") || "127.0.0.1";
+  const { success } = await ratelimit.limit(ip);
 
-  if(!success) return redirect('/too-fast');
+  if (!success) return redirect("/too-fast");
 
   try {
     const result = await signIn("credentials", {
@@ -24,8 +26,16 @@ export const signInWithCredentials = async (
       password,
       redirect: false,
     });
+    console.log(result);
 
     if (result?.error) return { success: false, error: result.error };
+
+    await db
+      .update(users)
+      .set({
+        lastActivityDate: new Date(),
+      })
+      .where(eq(users.email, email));
 
     return { success: true };
   } catch (error) {
@@ -37,10 +47,10 @@ export const signInWithCredentials = async (
 export const signUp = async (params: AuthCredentials) => {
   const { fullName, email, universityId, universityCard, password } = params;
 
-  const ip=(await headers()).get('x-forwarded-for')||'127.0.0.1';
-  const {success}=await ratelimit.limit(ip);
+  const ip = (await headers()).get("x-forwarded-for") || "127.0.0.1";
+  const { success } = await ratelimit.limit(ip);
 
-  if(!success) return redirect('/too-fast');
+  if (!success) return redirect("/too-fast");
 
   const exisitingUser = await db
     .select()
@@ -48,7 +58,8 @@ export const signUp = async (params: AuthCredentials) => {
     .where(eq(users.email, email))
     .limit(1);
 
-  if (exisitingUser.length>0) return { success: false, error: "user already exists" };
+  if (exisitingUser.length > 0)
+    return { success: false, error: "user already exists" };
 
   const hashedPassword = await hash(password, 10);
 
@@ -59,6 +70,11 @@ export const signUp = async (params: AuthCredentials) => {
       password: hashedPassword,
       universityCard,
       universityId,
+    });
+
+    await sendWelcomeEmail({
+      fullName,
+      email,
     });
 
     return { success: true };

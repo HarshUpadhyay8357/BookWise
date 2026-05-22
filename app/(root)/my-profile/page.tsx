@@ -10,7 +10,7 @@ const page = () => {
             'use server'
             await signOut();
         }}>
-            <Button>Logout</Button>
+            <Button>Logout</Button> 
         </form>
         <BookList title='borrowed books' books={sampleBooks}/>
     </>

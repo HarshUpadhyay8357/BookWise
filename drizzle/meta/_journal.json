@@ -8,6 +8,20 @@
       "when": 1779272225077,
       "tag": "0000_ancient_hydra",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1779474376696,
+      "tag": "0001_salty_fenris",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1779476180134,
+      "tag": "0002_true_the_hunter",
+      "breakpoints": true
     }
   ]
 }

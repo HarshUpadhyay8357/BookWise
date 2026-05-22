@@ -12,8 +12,9 @@ const {
 } = config;
 
 const authenticator = async () => {
+  console.log('inside authenticator');
   try {
-    const response = await fetch(`${config.env.apiEndpoint}/api/auth/imagekit`);
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/api/auth/imagekit`);
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -50,6 +51,7 @@ const ImageUpload = ({ onFileChange }: Props) => {
 
     try {
       const auth = await authenticator();
+      console.log(auth);
 
       const response = await upload({
         file,
@@ -60,14 +62,15 @@ const ImageUpload = ({ onFileChange }: Props) => {
         signature: auth.signature,
         folder: '/students', 
       });
+      console.log(response);
 
       setUploadedFile({
-        filePath: response.filePath,
-        url: response.url,
-        name: response.name,
+        filePath: response.filePath!,
+        url: response.url!,
+        name: response.name!,
       });
 
-      onFileChange(response.filePath);
+      onFileChange(response.filePath!);
       toast.success('Image uploaded successfully.');
     } catch (err: any) {
       console.error('Upload failed:', err);

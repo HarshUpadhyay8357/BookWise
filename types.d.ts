@@ -9,13 +9,13 @@ interface Book{
     description:string;
     coverColor:string;
     coverUrl:string;
-    video:string;
+    videoUrl:string;
     summary:string;
-    isLoanedBook:boolean;
+    isLoanedBook?:boolean;
 }
 
 interface AuthCredentials{
-    fullName:string,
+    fullName:string, 
     email:string,
     password:string,
     universityId:number,

@@ -64,6 +64,7 @@ const AuthForm = <T extends FieldValues>({
       );
 
       router.push("/");
+
     } else {
       toast.error(result.error ?? "An error occurred");
     }
