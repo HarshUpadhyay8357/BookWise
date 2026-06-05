@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn, getMediaUrl } from '@/lib/utils';
 import Image from 'next/image';
 import React from 'react'
 import BookCoverSvg from './BookCoverSvg';
@@ -21,13 +21,15 @@ interface Props{
 }
 
 const BookCover = ({className, variant='regular', coverColor='#012B48', coverUrl="https://placehold.co/400*600.png"}:Props) => {
+  const src = getMediaUrl(coverUrl) || "https://placehold.co/400*600.png";
+
   return (
-    <div className={cn('relative transition-all duration-300', variantStyles[variant], className)} >
+    <div className={cn('relative transition-all duration-300', variantStyles[variant], className)} style={{overflow:'hidden'}}>
         
         <BookCoverSvg coverColor={coverColor}/>
     
-    <div className="absolute z-10" style={{left:'12%', width:'87.5%', height:'88%'}}>
-        <Image src={coverUrl} alt='book cover' fill className='rounded-sm object-fill'/>
+    <div style={{position:'absolute', top:'0%', left:'13%', width:'86%', height:'87%', zIndex:10}}>
+        <Image src={src} alt='book cover' fill className='rounded-sm object-fill' sizes='(max-width: 480px) 174px, 296px'/>
     </div>
 
     </div>

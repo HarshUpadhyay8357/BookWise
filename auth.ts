@@ -31,7 +31,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             id: user[0].id,
             email: user[0].email,
             name: user[0].fullName,
-        } as User
+            role: user[0].role,
+        } as User & { role: string }
     }
   })],
   pages:{
@@ -47,8 +48,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     async session({session, token}){
         if(session.user){
-            session.user.id=token.id as string;
-            session.user.name=token.name as string;
+            session.user.id = token.id as string;
+            session.user.name = token.name as string;
         }
         return session;
     }

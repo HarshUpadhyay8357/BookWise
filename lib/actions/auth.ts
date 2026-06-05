@@ -7,7 +7,6 @@ import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import ratelimit from "../ratelimit";
 import { redirect } from "next/navigation";
-import { qstash } from "../workflow";
 import { sendWelcomeEmail } from "../email";
 
 export const signInWithCredentials = async (
@@ -26,7 +25,6 @@ export const signInWithCredentials = async (
       password,
       redirect: false,
     });
-    console.log(result);
 
     if (result?.error) return { success: false, error: result.error };
 
@@ -58,8 +56,9 @@ export const signUp = async (params: AuthCredentials) => {
     .where(eq(users.email, email))
     .limit(1);
 
-  if (exisitingUser.length > 0)
+  if (exisitingUser.length > 0){
     return { success: false, error: "user already exists" };
+  }
 
   const hashedPassword = await hash(password, 10);
 
@@ -75,6 +74,12 @@ export const signUp = async (params: AuthCredentials) => {
     await sendWelcomeEmail({
       fullName,
       email,
+    });
+
+    await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
     });
 
     return { success: true };

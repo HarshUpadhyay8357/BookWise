@@ -1,10 +1,31 @@
 import Image from 'next/image'
-import { Button } from './ui/button'
 import BookCover from './BookCover'
+import BookBorrow from './BookBorrow';
+import { db } from '@/database/drizzle';
+import { users } from '@/database/schema';
+import { eq } from 'drizzle-orm';
 
-const BookOverview = ({title, author, genre, rating, totalCopies, availableCopies, description, coverColor, coverUrl}:Book) => {
+interface Props extends Book{
+    userId:string;
+}
+
+const BookOverview = async ({id, title, author, genre, rating, totalCopies, availableCopies, description, coverColor, coverUrl, userId}:Props) => {
+
+    const [user] = await db
+    .select()
+    .from(users)
+    .where(eq(users.id ,userId))
+    .limit(1);
+
+    if(!user) return null;
+
+    const borrowingEligibility={
+        isEligible: availableCopies>0 && user.status==='Approved',
+        message: availableCopies<=0 ? 'Book is not available' : 'You are not eligible to borrow this book'
+    }
+
   return (
-    <section className="book-overview">
+    <section className="book-overview mt-[-25]">
         <div className="flex flex-1 flex-col gap-5">
             <h1>{title}</h1>
 
@@ -22,7 +43,7 @@ const BookOverview = ({title, author, genre, rating, totalCopies, availableCopie
                     <Image src='/icons/star.svg' alt='star' height={22} width={22}/>
                     <p>{rating}</p>
                 </div>
-            </div>
+            </div> 
 
             <div className="book-copies">
                 <p>
@@ -36,10 +57,7 @@ const BookOverview = ({title, author, genre, rating, totalCopies, availableCopie
 
            <p className='book-description'>{description}</p> 
 
-           <Button className='book-overview_btn'>
-                <Image src='/icons/book.svg' alt='book' height={20} width={20}/>
-                <p className='font-bebas-neue text-xl text-dark-100'>Borrow</p>
-           </Button>
+           <BookBorrow bookId={id} userId={userId} borrowingEligibility={borrowingEligibility}/>
         </div>
 
         <div className="relative flex flex-1 justify-center">

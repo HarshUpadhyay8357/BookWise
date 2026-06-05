@@ -281,21 +281,25 @@
 
   /* Book Cover */
   .book-cover_extra_small {
+    position: relative;
     width: 28.95px;
     height: 40px;
   }
 
   .book-cover_small {
+    position: relative;
     width: 55px;
     height: 76px;
   }
 
   .book-cover_medium {
+    position: relative;
     width: 144px;
     height: 199px;
   }
 
   .book-cover_regular {
+    position: relative;
     width: 114px;
     height: 169px;
   }
@@ -308,6 +312,7 @@
   }
 
   .book-cover_wide {
+    position: relative;
     width: 256px;
     height: 354px;
   }
